@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace == 指定实现哪个dao层类接口-->
+<mapper namespace="dao.IUserDao">
+    <select id="findByPage" parameterType="java.util.Map" resultType="domain.User">
+        select  * from t_user
+        <where>
+            <if test="username!=null">
+                name like concat('%',#{username},'%')
+            </if>
+        </where>
+        limit  #{start},#{end}
+    </select>
+    <!--获取总条数-->
+    <select id="getRowsCount" parameterType="java.util.Map" resultType="int">
+        select COUNT(*) FROM t_user
+        <where>
+            <if test="name!=null">
+                name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+    <!--删除单条-->
+    <delete id="deleteOne" parameterType="java.lang.String">
+        delete from t_user
+        <where>
+            id=#{id}
+        </where>
+    </delete>
+    <!--批量删除-->
+    <delete id="batchDelete" parameterType="java.lang.String">
+        delete from t_user
+        <where>
+            <foreach collection="list" item="id" separator="," open="id in (" close=")" >
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <!--增加单条数据-->
+    <insert id="insert" parameterType="domain.User">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="age != null">
+                age,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="likes != null">
+                likes,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="age != null">
+                #{age,jdbcType=VARCHAR},
+            </if>
+            <if test="likes != null">
+                #{likes,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="findByUsername" parameterType="java.lang.String" resultType="domain.User">
+        select * from t_user
+        <where>
+            name = #{name}
+        </where>
+    </select>
+
+    <!--登录-->
+    <select id="login" resultMap="BaseResultMap" parameterType="String">
+  select login_name, password from User
+  WHERE  login_name = #{login_name} AND password= #{password}
+</select>
+
+    <!--注册-->
+    <insert id="register" parameterType="com.ssm.model.User">
+  insert into User (login_name,password,user_name)
+  values (#{login_name}, #{password}, #{user_name})
+</insert>
+    <!--验证用户是否存在-->
+    <select id="findUserByLgName" resultType="int">
+    select count(*) from user where username like #{username}
+</select>
+</mapper>

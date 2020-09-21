@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace == 指定实现哪个dao层类接口-->
+<mapper namespace="dao.IStudentDao">
+    <select id="findByPage" parameterType="java.util.Map" resultType="domain.Student">
+        select  * from   student
+        <where>
+            <if test="username!=null">
+                name like concat('%',#{username},'%')
+            </if>
+        </where>
+        limit  #{start},#{end}
+    </select>
+    <select id="getRowsCount" parameterType="java.util.Map" resultType="int">
+        select COUNT(*) FROM student
+        <where>
+            <if test="username!=null">
+                name like concat('%',#{username},'%')
+            </if>
+        </where>
+    </select>
+    <delete id="deleteOne" parameterType="java.lang.String">
+        delete from student
+        <where>
+            id=#{id}
+        </where>
+    </delete>
+    <!--批量删除-->
+    <delete id="batchDelete" parameterType="java.lang.String">
+        delete from student
+        <where>
+            <foreach collection="list" item="id" separator="," open="id in (" close=")" >
+                #{id}
+            </foreach>
+        </where>
+    </delete>
+
+    <!--增加单条数据-->
+    <insert id="insert" parameterType="domain.Student">
+        insert into student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="photo != null">
+                photo,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="clazz != null">
+                clazz,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="photo != null">
+                #{photo,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=VARCHAR},
+            </if>
+            <if test="clazz != null">
+                #{clazz,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>
